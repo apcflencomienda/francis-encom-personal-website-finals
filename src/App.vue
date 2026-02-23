@@ -158,7 +158,7 @@
 </template>
 
 <script>
-import { supabase } from './supabase.js'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
 export default {
   name: 'App',
@@ -199,40 +199,39 @@ export default {
       }
     },
 
-    // GET - Fetch all comments from Supabase
+    // GET - Fetch all comments from Flask backend
     async fetchComments() {
       this.loadingComments = true
-      const { data, error } = await supabase
-        .from('comments')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) {
+      try {
+        const response = await fetch(`${API_URL}/comments`)
+        if (!response.ok) throw new Error('Failed to fetch')
+        this.comments = await response.json()
+      } catch (error) {
         console.error('Error fetching comments:', error)
-      } else {
-        this.comments = data
       }
       this.loadingComments = false
     },
 
-    // POST - Insert a new comment into Supabase
+    // POST - Submit a new comment to Flask backend
     async submitComment() {
       this.submitting = true
       this.submitSuccess = false
       this.submitError = false
 
-      const { error } = await supabase
-        .from('comments')
-        .insert([{ name: this.newComment.name, message: this.newComment.message }])
-
-      if (error) {
-        console.error('Error submitting comment:', error)
-        this.submitError = true
-      } else {
+      try {
+        const response = await fetch(`${API_URL}/comments`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: this.newComment.name, message: this.newComment.message })
+        })
+        if (!response.ok) throw new Error('Failed to submit')
         this.submitSuccess = true
         this.newComment.name = ''
         this.newComment.message = ''
-        await this.fetchComments() // Refresh list after posting
+        await this.fetchComments()
+      } catch (error) {
+        console.error('Error submitting comment:', error)
+        this.submitError = true
       }
 
       this.submitting = false
