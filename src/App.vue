@@ -25,6 +25,7 @@
         <a href="#projects" @click="scrollToSection('projects')">Projects</a>
         <a href="#digital-art" @click="scrollToSection('digital-art')">Digital Art</a>
         <a href="#games" @click="scrollToSection('games')">Games</a>
+        <a href="#guestbook" @click="scrollToSection('guestbook')">Guestbook</a>
         <a href="#contact" @click="scrollToSection('contact')">Contact</a>
       </div>
     </nav>
@@ -59,7 +60,7 @@
         <div class="container">
           <h2>Projects</h2>
           <div class="project-card">
-            <h3>AGHAMamazingQuest CMS</h3>
+            <h3>AGHAMazingQuest CMS</h3>
             <p>An APC-DOST Project - A content management system for educational purposes.</p>
           </div>
         </div>
@@ -89,6 +90,52 @@
         </div>
       </section>
 
+      <!-- Guestbook Section -->
+      <section id="guestbook" class="section">
+        <div class="container">
+          <h2>Guestbook</h2>
+          <p class="guestbook-subtitle">Leave a message!</p>
+
+          <!-- Submit Form (POST) -->
+          <form class="guestbook-form" @submit.prevent="submitComment">
+            <input
+              v-model="newComment.name"
+              type="text"
+              placeholder="Your name"
+              class="guestbook-input"
+              required
+            />
+            <textarea
+              v-model="newComment.message"
+              placeholder="Your message..."
+              class="guestbook-textarea"
+              rows="3"
+              required
+            ></textarea>
+            <button type="submit" class="guestbook-btn" :disabled="submitting">
+              {{ submitting ? 'Sending...' : 'Leave a Message' }}
+            </button>
+          </form>
+
+          <!-- Success / Error feedback -->
+          <p v-if="submitSuccess" class="feedback success">✅ Message sent! Thank you!</p>
+          <p v-if="submitError" class="feedback error">❌ Something went wrong. Please try again.</p>
+
+          <!-- Comments List (GET) -->
+          <div class="comments-list">
+            <p v-if="loadingComments" class="loading-text">Loading messages...</p>
+            <p v-else-if="comments.length === 0" class="no-comments">No messages yet. Be the first!</p>
+            <div v-else class="comment-card" v-for="comment in comments" :key="comment.id">
+              <div class="comment-header">
+                <span class="comment-name">{{ comment.name }}</span>
+                <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
+              </div>
+              <p class="comment-message">{{ comment.message }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Contact Section -->
       <section id="contact" class="section">
         <div class="container">
@@ -111,23 +158,38 @@
 </template>
 
 <script>
+import { supabase } from './supabase.js'
+
 export default {
   name: 'App',
   data() {
     return {
       artImages: [
         { path: '/images/art/ARTPRE1.jpg', alt: 'Digital Art 1' },
-        { path: '/images/art/Bladerunner2049 mosaic from Cedric Encomienda.jpg', alt: 'Digital Art 2' },
-        { path: '/images/art/wallpaperflare.com_wallpaper.png', alt: 'Digital Art 3' }
+        { path: '/images/art/Bladerunner2049.jpg', alt: 'Digital Art 2' },
+        { path: '/images/art/wallpaper.png', alt: 'Digital Art 3' }
       ],
       gameImages: [
-        { path: '/images/games/bf1 logo.png', alt: 'Battlefield 1' },
-        { path: '/images/games/city skyline logo.png', alt: 'Cities Skylines' },
-        { path: '/images/games/project reality.png', alt: 'Project Reality' },
-        { path: '/images/games/war thunder logo.png', alt: 'War Thunder' },
-        { path: '/images/games/zzz logo.png', alt: 'ZZZ Game' }
-      ]
+        { path: '/images/games/bf1.png', alt: 'Battlefield 1' },
+        { path: '/images/games/city_skylines.png', alt: 'Cities Skylines' },
+        { path: '/images/games/project_reality.png', alt: 'Project Reality' },
+        { path: '/images/games/war_thunder.png', alt: 'War Thunder' },
+        { path: '/images/games/zzz.png', alt: 'ZZZ Game' }
+      ],
+      // Guestbook data
+      comments: [],
+      loadingComments: false,
+      newComment: {
+        name: '',
+        message: ''
+      },
+      submitting: false,
+      submitSuccess: false,
+      submitError: false
     }
+  },
+  mounted() {
+    this.fetchComments()
   },
   methods: {
     scrollToSection(sectionId) {
@@ -135,6 +197,60 @@ export default {
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' })
       }
+    },
+
+    // GET - Fetch all comments from Supabase
+    async fetchComments() {
+      this.loadingComments = true
+      const { data, error } = await supabase
+        .from('comments')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Error fetching comments:', error)
+      } else {
+        this.comments = data
+      }
+      this.loadingComments = false
+    },
+
+    // POST - Insert a new comment into Supabase
+    async submitComment() {
+      this.submitting = true
+      this.submitSuccess = false
+      this.submitError = false
+
+      const { error } = await supabase
+        .from('comments')
+        .insert([{ name: this.newComment.name, message: this.newComment.message }])
+
+      if (error) {
+        console.error('Error submitting comment:', error)
+        this.submitError = true
+      } else {
+        this.submitSuccess = true
+        this.newComment.name = ''
+        this.newComment.message = ''
+        await this.fetchComments() // Refresh list after posting
+      }
+
+      this.submitting = false
+
+      // Hide feedback after 3 seconds
+      setTimeout(() => {
+        this.submitSuccess = false
+        this.submitError = false
+      }, 3000)
+    },
+
+    formatDate(dateString) {
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      })
     }
   }
 }
