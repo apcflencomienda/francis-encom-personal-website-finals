@@ -1,3 +1,43 @@
+/* Theme Variables */
+:root {
+  --bg-color: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --text-color: #333333;
+  --text-muted: #666666;
+  --card-bg: #ffffff;
+  --card-border: #e0e0e0;
+  --nav-bg: #2c3e50;
+  --nav-text: #ffffff;
+  --nav-hover: #34495e;
+  --heading-color: #2c3e50;
+  --link-color: #3498db;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --modal-bg: rgba(0, 0, 0, 0.9);
+  --wiki-bg: #f8f9fa;
+  --wiki-header: #e0e0e0;
+  --wiki-border: #a2a9b1;
+}
+
+/* Dark Mode Overrides */
+:root.dark-mode {
+  --bg-color: #121212;
+  --bg-secondary: #1e1e1e;
+  --text-color: #e0e0e0;
+  --text-muted: #aaaaaa;
+  --card-bg: #1e1e1e;
+  --card-border: #333333;
+  --nav-bg: #1a1a1a;
+  --nav-text: #e0e0e0;
+  --nav-hover: #333333;
+  --heading-color: #ffffff;
+  --link-color: #64b5f6;
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --modal-bg: rgba(0, 0, 0, 0.95);
+  --wiki-bg: #1e1e1e;
+  --wiki-header: #2c2c2c;
+  --wiki-border: #444444;
+}
+
 /* Reset and base styles */
 * {
   margin: 0;
@@ -8,7 +48,27 @@
 body {
   font-family: 'Arial', sans-serif;
   line-height: 1.6;
-  color: #333;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Button for Dark Mode Toggle */
+.theme-toggle {
+  background: transparent;
+  color: var(--nav-text);
+  border: 1px solid var(--nav-text);
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  margin-left: auto;
+  /* Push to the right side of nav */
+}
+
+.theme-toggle:hover {
+  background: var(--nav-hover);
 }
 
 .container {
@@ -19,8 +79,9 @@ body {
 
 /* Header Styles */
 .header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--nav-bg);
   color: white;
+  /* Header text stays white regardless of theme */
   padding: 60px 0;
   text-align: center;
   position: relative;
@@ -28,6 +89,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.3s ease;
 }
 
 .header .container {
@@ -38,13 +100,15 @@ body {
 .header h1 {
   font-size: 2.5rem;
   margin-bottom: 10px;
-  padding-right: 220px; /* Space for profile picture */
+  padding-right: 220px;
+  /* Space for profile picture */
 }
 
 .subtitle {
   font-size: 1.2rem;
   opacity: 0.9;
-  padding-right: 220px; /* Space for profile picture */
+  padding-right: 220px;
+  /* Space for profile picture */
 }
 
 /* Circular Profile Picture */
@@ -61,27 +125,29 @@ body {
   border-radius: 50%;
   object-fit: cover;
   border: 5px solid white;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* Navigation */
 .nav {
-  background: #2c3e50;
+  background: var(--nav-bg);
   padding: 15px 0;
   position: sticky;
   top: 0;
   z-index: 100;
+  transition: background-color 0.3s ease;
 }
 
 .nav .container {
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
   gap: 15px;
 }
 
 .nav a {
-  color: white;
+  color: var(--nav-text);
   text-decoration: none;
   padding: 10px 20px;
   border-radius: 5px;
@@ -89,8 +155,9 @@ body {
   white-space: nowrap;
 }
 
-.nav a:hover {
-  background: #34495e;
+.nav a:hover,
+.nav a.router-link-active {
+  background: var(--nav-hover);
 }
 
 /* Section Styles */
@@ -99,23 +166,117 @@ body {
 }
 
 .section:nth-child(even) {
-  background: #f8f9fa;
+  background-color: var(--bg-secondary);
 }
 
 .section h2 {
   text-align: center;
   margin-bottom: 40px;
   font-size: 2.2rem;
-  color: #2c3e50;
+  color: var(--heading-color);
+  transition: color 0.3s ease;
 }
 
-/* About Section */
-.about-content {
-  max-width: 800px;
+/* ===== Wiki-Style About Section ===== */
+.wiki-layout {
+  display: flex;
+  flex-direction: column-reverse;
+  /* Mobile: Infobox on top */
+  gap: 30px;
+  max-width: 1000px;
   margin: 0 auto;
-  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .wiki-layout {
+    flex-direction: row;
+    /* Desktop: Main left, Infobox right */
+    align-items: flex-start;
+  }
+}
+
+/* Main Content Area */
+.wiki-main {
+  flex: 1;
   font-size: 1.1rem;
   line-height: 1.8;
+  color: var(--text-color);
+}
+
+.intro-text {
+  font-size: 1.15rem;
+  margin-bottom: 20px;
+}
+
+.wiki-main h3 {
+  color: var(--heading-color);
+  border-bottom: 1px solid var(--wiki-border);
+  padding-bottom: 5px;
+  margin: 25px 0 10px;
+  font-size: 1.4rem;
+}
+
+.hobbies-list {
+  padding-left: 25px;
+  margin-bottom: 15px;
+}
+
+.hobbies-list li {
+  margin-bottom: 5px;
+}
+
+/* Infobox (Wikipedia Style) */
+.wiki-infobox {
+  width: 100%;
+  max-width: 320px;
+  background-color: var(--wiki-bg);
+  border: 1px solid var(--wiki-border);
+  border-spacing: 3px;
+  font-size: 0.95rem;
+  padding: 5px;
+  margin: 0 auto;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  color: var(--text-color);
+}
+
+.infobox-header {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  background-color: var(--wiki-header);
+  padding: 8px;
+  margin-bottom: 8px;
+  color: var(--text-color);
+}
+
+.infobox-image {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px;
+  border: 1px solid var(--wiki-border);
+}
+
+.infobox-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.infobox-table th {
+  text-align: left;
+  vertical-align: top;
+  padding: 8px;
+  width: 35%;
+  border-top: 1px solid var(--wiki-border);
+  color: var(--text-color);
+}
+
+.infobox-table td {
+  padding: 8px;
+  vertical-align: top;
+  border-top: 1px solid var(--wiki-border);
+  color: var(--text-muted);
 }
 
 /* Skills Grid - No Hover */
@@ -127,90 +288,133 @@ body {
 }
 
 .skill-card {
-  background: white;
+  background: var(--card-bg);
   padding: 30px;
   border-radius: 10px;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   font-weight: bold;
   font-size: 1.1rem;
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Project Card */
 .project-card {
-  background: white;
+  background: var(--card-bg);
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 15px var(--shadow-color);
   max-width: 600px;
   margin: 0 auto;
   text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .project-card h3 {
-  color: #2c3e50;
+  color: var(--heading-color);
   margin-bottom: 15px;
   font-size: 1.5rem;
 }
 
 .project-card p {
   line-height: 1.6;
-  color: #666;
+  color: var(--text-muted);
 }
 
 /* Digital Art Gallery */
 .art-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
   margin-top: 30px;
 }
 
 .art-item {
-  background: white;
-  padding: 15px;
   border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .art-item img {
+  display: block;
   width: 100%;
-  height: 250px;
-  object-fit: cover;
+  height: auto;
   border-radius: 5px;
+  box-shadow: 0 8px 25px var(--shadow-color);
 }
 
-/* Games Grid - No Hover */
+/* Games Grid - Vertical Alignment */
 .games-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 30px;
   margin-top: 30px;
 }
 
 .game-card {
-  background: white;
+  background: var(--card-bg);
   padding: 20px;
   border-radius: 15px;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: left;
+  box-shadow: 0 4px 15px var(--shadow-color);
+  width: 100%;
+  max-width: 600px;
+  /* Prevent it from stretching across the entire screen */
+  display: flex;
+  /* Allow image and text to potentially sit side-by-side or stack nicely */
+  flex-direction: column;
+  /* Mobile first: stack */
+  gap: 20px;
+  /* Space between image and text */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+@media (min-width: 600px) {
+  .game-card {
+    flex-direction: row;
+    /* Desktop: side-by-side */
+    align-items: center;
+    /* Center text vertically with the image */
+  }
 }
 
 .game-card img {
   width: 100%;
-  height: 120px;
+  max-width: 250px;
+  /* Make the image slightly smaller to fit text next to it */
+  height: auto;
   object-fit: contain;
   border-radius: 10px;
+  flex-shrink: 0;
+  /* Prevent the image from shrinking when the text is long */
+}
+
+.game-desc {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: 0;
+  /* Removing top margin since gap handles it now */
 }
 
 /* Contact Section */
 .contact-info {
   text-align: center;
+  font-size: 1.2rem;
 }
 
 .contact-info p {
-  margin: 10px 0;
+  margin: 15px 0;
   font-size: 1.1rem;
+}
+
+.contact-info a {
+  color: var(--link-color);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.contact-info a:hover {
+  text-decoration: underline;
 }
 
 .placeholder-link {
@@ -230,10 +434,13 @@ body {
 
 /* Footer */
 .footer {
-  background: #2c3e50;
+  background: var(--nav-bg);
   color: white;
+  /* Footer text stays white regardless of theme */
   text-align: center;
-  padding: 30px 0;
+  padding: 20px 0;
+  margin-top: 40px;
+  transition: background-color 0.3s ease;
 }
 
 /* Responsive Design */
@@ -242,11 +449,11 @@ body {
     padding-right: 180px;
     font-size: 2.2rem;
   }
-  
+
   .subtitle {
     padding-right: 180px;
   }
-  
+
   .profile-pic {
     width: 160px;
     height: 160px;
@@ -258,62 +465,58 @@ body {
     padding: 40px 0;
     min-height: 150px;
   }
-  
+
   .header h1 {
     font-size: 1.8rem;
     padding-right: 0;
     margin-bottom: 20px;
   }
-  
+
   .subtitle {
     padding-right: 0;
     font-size: 1rem;
   }
-  
+
   .profile-container {
     position: static;
     transform: none;
     margin: 20px auto 0;
     order: 3;
   }
-  
+
   .profile-pic {
     width: 120px;
     height: 120px;
   }
-  
+
   .header .container {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
-  
+
   .nav .container {
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .nav a {
     text-align: center;
     padding: 12px;
   }
-  
+
   .skills-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
-  .games-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
+
   .art-gallery {
     grid-template-columns: 1fr;
   }
-  
+
   .section {
     padding: 40px 0;
   }
-  
+
   .section h2 {
     font-size: 1.8rem;
   }
@@ -323,28 +526,24 @@ body {
   .header h1 {
     font-size: 1.6rem;
   }
-  
+
   .skills-grid {
     grid-template-columns: 1fr;
   }
-  
-  .games-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
+
   .nav a {
     padding: 10px;
     font-size: 0.9rem;
   }
-  
+
   .skill-card {
     padding: 20px;
   }
-  
+
   .game-card {
     padding: 15px;
   }
-  
+
   .art-item img {
     height: 200px;
   }
@@ -352,14 +551,11 @@ body {
 
 /* Extra small devices */
 @media (max-width: 360px) {
-  .games-grid {
-    grid-template-columns: 1fr;
-  }
-  
+
   .header h1 {
     font-size: 1.4rem;
   }
-  
+
   .nav a {
     font-size: 0.85rem;
     padding: 8px 12px;
@@ -386,17 +582,19 @@ body {
 .guestbook-textarea {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--card-border);
   border-radius: 8px;
   font-size: 1rem;
   font-family: inherit;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, background-color 0.3s, color 0.3s;
   outline: none;
+  background-color: var(--card-bg);
+  color: var(--text-color);
 }
 
 .guestbook-input:focus,
 .guestbook-textarea:focus {
-  border-color: #667eea;
+  border-color: var(--link-color);
 }
 
 .guestbook-textarea {
@@ -431,8 +629,13 @@ body {
   margin-bottom: 20px;
 }
 
-.feedback.success { color: #27ae60; }
-.feedback.error   { color: #e74c3c; }
+.feedback.success {
+  color: #27ae60;
+}
+
+.feedback.error {
+  color: #e74c3c;
+}
 
 /* Comments List */
 .comments-list {
@@ -446,16 +649,17 @@ body {
 .loading-text,
 .no-comments {
   text-align: center;
-  color: #999;
+  color: var(--text-muted);
   font-size: 1rem;
 }
 
 .comment-card {
-  background: white;
+  background: var(--card-bg);
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 15px var(--shadow-color);
   border-left: 4px solid #667eea;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .comment-header {
@@ -465,21 +669,23 @@ body {
   margin-bottom: 10px;
   flex-wrap: wrap;
   gap: 5px;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 10px;
 }
 
 .comment-name {
   font-weight: bold;
-  color: #2c3e50;
+  color: var(--heading-color);
   font-size: 1rem;
 }
 
 .comment-date {
   font-size: 0.85rem;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .comment-message {
-  color: #555;
+  color: var(--text-color);
   line-height: 1.6;
 }
 
@@ -487,7 +693,79 @@ body {
   .guestbook-form {
     padding: 0 10px;
   }
+
   .comment-card {
     padding: 15px;
+  }
+}
+
+/* ===== Image Modal Styles ===== */
+.clickable-image {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.clickable-image:hover {
+  transform: scale(1.03);
+}
+
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  max-width: 90%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  animation: modalZoomIn 0.3s ease-out;
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1001;
+}
+
+.close-btn:hover {
+  background: white;
+  color: black;
+  transform: scale(1.1);
+}
+
+@keyframes modalZoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
